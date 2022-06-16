@@ -1,0 +1,119 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace FirstFormApp
+{
+    public partial class Form5 : Form
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+        int stdnum;
+        string stdname;
+        string program;
+        string dept;
+        public Form5()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            con = new SqlConnection("Data Source=10.10.10.31,1433;Initial Catalog=2021MCA;User ID=amma;Password=amma123");
+            MessageBox.Show("Connected..");
+            con.Open();
+            //cmd = new SqlCommand("insert into aistblStudents values(101,'Meera','MCA','CS')", con);
+
+            cmd = new SqlCommand("insert into aistblStudents values(" + tb1.Text + ",'" + tb2.Text + "','" + tb3.Text + "','" + tb4.Text + "')", con);
+            cmd.ExecuteNonQuery();
+            
+            con.Close();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            lbsearch.Visible = true;
+            txtserach.Visible = true;
+            find.Visible = true;
+
+        }
+
+        private void find_Click(object sender, EventArgs e)
+        {
+            con = new SqlConnection("Data Source=10.10.10.31,1433;Initial Catalog=2021MCA;User ID=amma;Password=amma123");
+            
+            con.Open();
+            int txtsearch = Convert.ToInt32(txtserach.Text);
+            cmd = new SqlCommand("select * from aistblStudents where stdno=" + txtsearch, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            while(dr.Read())
+            {
+                tb1.Text = dr["stdno"].ToString();
+                tb2.Text = dr["studname"].ToString();
+                tb3.Text = dr["programme"].ToString();
+                tb4.Text = dr["department"].ToString();
+            }
+            
+            con.Close();
+        }
+
+        private void update_Click(object sender, EventArgs e)
+        {
+            con = new SqlConnection("Data Source=10.10.10.31,1433;Initial Catalog=2021MCA;User ID=amma;Password=amma123");
+           
+            con.Open();
+
+
+            //cmd = new SqlCommand("update aistblStudents set studname"+"='"+ tb2.Text + "',"+"programme"+"='"+ tb3.Text + "',"+"department"+"='" + tb4.Text + "'"+"where stdno=" + tb1.Text, con);
+            cmd = new SqlCommand("update aistblStudents set studname='" + tb2.Text + "'," + "programme='" + tb3.Text + "'," + "department='" + tb4.Text + "' where stdno=" + tb1.Text, con);
+            cmd.ExecuteNonQuery();
+            con.Close();
+
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string message = "Do yo want to delete the record";
+            string title = "Confirm";
+            MessageBox.Show(message, title);
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show(message, title, buttons);
+            if (result == DialogResult.Yes)
+            {
+                this.Close();
+
+                con = new SqlConnection("Data Source=10.10.10.31,1433;Initial Catalog=2021MCA;User ID=amma;Password=amma123");
+
+                con.Open();
+
+
+                
+                cmd = new SqlCommand("delete from aistblStudents where stdno=" + tb1.Text, con);
+
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            else
+            {
+                //else code
+            }
+
+            
+
+        }
+
+        private void Form5_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
